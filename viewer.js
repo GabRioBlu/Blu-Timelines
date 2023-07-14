@@ -32,26 +32,30 @@ function draw()
   ctx.fillStyle = "#FFFFFF";
   ctx.fillRect(0, (-5+cameraOffset.y)*scale+canvas.height/2, canvas.width, 10*scale);
   
-  //let firstPos = 0 - (50 - (canvas.width/2 +cameraOffset.x) % 50);
+  let firstPos = canvas.width/2 + cameraOffset.x%100;
   
-  let firstPos = canvas.width/2+cameraOffset.x;
+  ctx.font = "bold 13 Arial";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "top";
   
   ctx.beginPath();
-  ctx.arc((firstPos-canvas.width/2)*scale+canvas.width/2, (cameraOffset.y)*scale+canvas.height/2, 15*scale, 0, 2*Math.PI);
+  ctx.arc((firstPos-canvas.width/2)*scale+canvas.width/2, (cameraOffset.y)*scale+canvas.height/2, 13*scale, 0, 2*Math.PI);
   ctx.fill();
   
-  for (let i = 0; i < Math.ceil(canvas.width/50/scale)+2; i++)
+  for (let i = 1; i < Math.ceil(canvas.width/100/scale)+2; i++)
   {
-    let x = firstPos+i*50;
+    let x = firstPos+i*100;
     
     ctx.beginPath();
-    ctx.arc((x-canvas.width/2)*scale+canvas.width/2, (cameraOffset.y)*scale+canvas.height/2, 10*scale, 0, 2*Math.PI);
+    ctx.arc((x-canvas.width/2)*scale+canvas.width/2, (cameraOffset.y)*scale+canvas.height/2, 13*scale, 0, 2*Math.PI);
     ctx.fill();
     
-    x = firstPos-i*50;
+    console.log(Math.round((x-firstPos)/100)-Math.floor(cameraOffset.x/100))
+    
+    x = firstPos-i*100;
     
     ctx.beginPath();
-    ctx.arc((x-canvas.width/2)*scale+canvas.width/2, (cameraOffset.y)*scale+canvas.height/2, 10*scale, 0, 2*Math.PI);
+    ctx.arc((x-canvas.width/2)*scale+canvas.width/2, (cameraOffset.y)*scale+canvas.height/2, 13*scale, 0, 2*Math.PI);
     ctx.fill();
   }
   
