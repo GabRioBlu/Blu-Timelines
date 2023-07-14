@@ -1,9 +1,21 @@
+//
+// VARIABLES
+//
+
 const canvas = document.getElementById("Display");
 const ctx = canvas.getContext("2d");
 
 let dragging = false;
 let cameraOffset = {x:0,y:0};
 let scale = 1;
+
+let firstPinch = null;
+let lastZoom = scale;
+let mousePos={x:0,y:0};
+
+//
+// FUNCTIONS
+//
 
 function draw()
 {
@@ -43,10 +55,6 @@ function onPointerMove(e)
   }
 }
 
-let firstPinch = null;
-let lastZoom = scale;
-let mousePos={x:0,y:0};
-
 function pinch(e)
 {
   e.preventDefault();
@@ -84,11 +92,29 @@ function zoom(e, amount, factor)
   }
 }
 
+//
+// EVENTS
+//
+
 canvas.addEventListener("pointerdown", onPointerDown);
 canvas.addEventListener("pointerup", onPointerOut);
 canvas.addEventListener("pointermove", onPointerMove);
 
 canvas.addEventListener("touchmove", pinch);
 canvas.addEventListener("wheel", (e) => zoom(e, e.deltaY));
+
+document.getElementById("import").onclick = function() {
+  var files = document.getElementById("jsonFile").files;
+  if (files.length <= 0)
+    return false;
+  
+  var fr = new FileReader();
+  
+  fr.onload = function(e) {
+    var result = JSON.parse(e.target.result);
+  }
+  
+  fr.readAsText(files.item(0));
+}
 
 draw();
