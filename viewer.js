@@ -7,7 +7,7 @@ const ctx = canvas.getContext("2d");
 
 let dragging = false;
 let cameraOffset = {x:0,y:0};
-let scale = 1;
+let scale = 0.7;
 
 let firstPinch = null;
 let lastZoom = scale;
@@ -30,29 +30,33 @@ function draw()
   ctx.setTransform(1, 0, matrix.c, 1, 0, 0);
   
   ctx.fillStyle = "#FFFFFF";
-  ctx.fillRect(0, (canvas.height/2-5+cameraOffset.y)*scale, canvas.width, 10*scale);
+  ctx.fillRect(0, (-5+cameraOffset.y)*scale+canvas.height/2, canvas.width, 10*scale);
   
-  let firstPos = 0 - (50 - (canvas.width/2 + cameraOffset.x) % 50);
+  //let firstPos = 0 - (50 - (canvas.width/2 +cameraOffset.x) % 50);
+  
+  let firstPos = canvas.width/2+cameraOffset.x;
+  
+  ctx.beginPath();
+  ctx.arc((firstPos-canvas.width/2)*scale+canvas.width/2, (cameraOffset.y)*scale+canvas.height/2, 15*scale, 0, 2*Math.PI);
+  ctx.fill();
   
   for (let i = 0; i < Math.ceil(canvas.width/50/scale)+2; i++)
   {
     let x = firstPos+i*50;
     
-    if (Math.round(x - cameraOffset.x) == canvas.width/2)
-    {
-      ctx.beginPath();
-      ctx.arc(x*scale, (canvas.height/2 + cameraOffset.y)*scale, 15*scale, 0, 2*Math.PI);
-      ctx.fill();
-      continue;
-    }
+    ctx.beginPath();
+    ctx.arc((x-canvas.width/2)*scale+canvas.width/2, (cameraOffset.y)*scale+canvas.height/2, 10*scale, 0, 2*Math.PI);
+    ctx.fill();
+    
+    x = firstPos-i*50;
     
     ctx.beginPath();
-    ctx.arc(x*scale, (canvas.height/2 + cameraOffset.y)*scale, 10*scale, 0, 2*Math.PI);
+    ctx.arc((x-canvas.width/2)*scale+canvas.width/2, (cameraOffset.y)*scale+canvas.height/2, 10*scale, 0, 2*Math.PI);
     ctx.fill();
   }
   
   ctx.fillStyle = "#00CC00";
-  ctx.fillRect((0+cameraOffset.x)*scale, (0+cameraOffset.y)*scale, 100*scale, 50*scale);
+  ctx.fillRect((cameraOffset.x-canvas.width/2)*scale+canvas.width/2, (cameraOffset.y-canvas.height/2)*scale+canvas.height/2, 100*scale, 50*scale);
   
   requestAnimationFrame(draw);
 }
@@ -114,12 +118,9 @@ function zoom(e, amount, factor)
   else
   {
     //ctx.scale(factor*lastZoom/scale, factor*lastZoom/scale);
-    scale = factor * lastZoom;
+    scale = (1 + (factor-1)*0.7) * lastZoom;
   }
-  console.log(cameraOffset);
-  
-  cameraOffset.x -= (cameraOffset.x+mousePos.x)*(scale/previousScale-1)
-  cameraOffset.y -= (cameraOffset.y+mousePos.y)*(scale/previousScale-1)
+  scale = Math.min(Math.max(scale, 0.2), 1.1);
 }
 
 //
