@@ -12,18 +12,24 @@
 </head>
 
 <body>
-    <!-- HTML -->
-    <p>Nothing to see here... Yet. So far.</p>
-    
-    <input type="file" id="jsonFile"></input>
-    <button id="import">Import</button>
-
+  <!-- HTML -->
+  <p>Nothing to see here... Yet. So far.</p>
+  
+  <input type="file" id="jsonFile"></input>
+  <button id="import">Import</button>
+  <button id="test">Test</button>
+  
+  <h3 id="title" style="color:white; position:absolute; top:70px; left:10px">pain</h3>
+  
 	<canvas id="Display" style="display:block; background-color:black; width:100%; touch-action: none">
+	  
+  </canvas>
 
-	</canvas>
-
-    <!-- Scripts -->
-    <script src="main.js"></script>
-    <script src="extras.js"></script>
+  <!-- Scripts -->
+  <script type="text/javascript">
+    var timeline = null;
+  </script>
+  <script src="viewer.js"></script>
+  <script src="viewer-loader.js"></script>
 </body>
 </html>

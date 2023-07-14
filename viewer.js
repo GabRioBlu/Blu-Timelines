@@ -11,7 +11,8 @@ let scale = 1;
 
 let firstPinch = null;
 let lastZoom = scale;
-let mousePos={x:0,y:0};
+let mousePos = {x:0,y:0};
+let startPos = {x:0,y:0};
 
 //
 // FUNCTIONS
@@ -22,12 +23,36 @@ function draw()
   ctx.save();
   ctx.setTransform(1,0,0,1,0,0);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  
   ctx.restore();
   
-  console.log(cameraOffset);
+  let matrix = ctx.getTransform();
+  ctx.setTransform(1, 0, matrix.c, 1, 0, 0);
+  
+  ctx.fillStyle = "#FFFFFF";
+  ctx.fillRect(0, (canvas.height/2-5+cameraOffset.y)*scale, canvas.width, 10*scale);
+  
+  let firstPos = 0 - (50 - (canvas.width/2 + cameraOffset.x) % 50);
+  
+  for (let i = 0; i < Math.ceil(canvas.width/50/scale)+2; i++)
+  {
+    let x = firstPos+i*50;
+    
+    if (Math.round(x - cameraOffset.x) == canvas.width/2)
+    {
+      ctx.beginPath();
+      ctx.arc(x*scale, (canvas.height/2 + cameraOffset.y)*scale, 15*scale, 0, 2*Math.PI);
+      ctx.fill();
+      continue;
+    }
+    
+    ctx.beginPath();
+    ctx.arc(x*scale, (canvas.height/2 + cameraOffset.y)*scale, 10*scale, 0, 2*Math.PI);
+    ctx.fill();
+  }
   
   ctx.fillStyle = "#00CC00";
-  ctx.fillRect(0, 0, 100, 50);
+  ctx.fillRect((0+cameraOffset.x)*scale, (0+cameraOffset.y)*scale, 100*scale, 50*scale);
   
   requestAnimationFrame(draw);
 }
@@ -43,6 +68,7 @@ function onPointerOut(e)
   dragging = false;
   firstPinch = null;
   lastZoom = scale;
+  startPos = cameraOffset;
 }
 
 function onPointerMove(e)
@@ -51,7 +77,7 @@ function onPointerMove(e)
   {
     cameraOffset.x += e.movementX/scale;
     cameraOffset.y += e.movementY/scale;
-    ctx.translate(e.movementX/scale, e.movementY/scale);
+    //ctx.translate(e.movementX/scale, e.movementY/scale);
   }
 }
 
@@ -81,15 +107,19 @@ function zoom(e, amount, factor)
   {
     let direction = amount > 0 ? 1 : -1;
     scale += 0.05 * direction;
-    ctx.scale(0.05*direction, 0.05*direction);
+    //ctx.scale(0.05*direction, 0.05*direction);
     mousePos.x = e.offsetX;
     mousePos.y = e.offsetY;
   }
   else
   {
-    ctx.scale(factor*lastZoom/scale, factor*lastZoom/scale);
+    //ctx.scale(factor*lastZoom/scale, factor*lastZoom/scale);
     scale = factor * lastZoom;
   }
+  console.log(cameraOffset);
+  
+  cameraOffset.x -= (cameraOffset.x+mousePos.x)*(scale/previousScale-1)
+  cameraOffset.y -= (cameraOffset.y+mousePos.y)*(scale/previousScale-1)
 }
 
 //
@@ -111,7 +141,8 @@ document.getElementById("import").onclick = function() {
   var fr = new FileReader();
   
   fr.onload = function(e) {
-    var result = JSON.parse(e.target.result);
+    timeline = JSON.parse(e.target.result);
+    load();
   }
   
   fr.readAsText(files.item(0));
